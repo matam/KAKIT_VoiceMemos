@@ -5,9 +5,18 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
 import edu.zut.wi.kakit.voicememos.R
 import edu.zut.wi.kakit.voicememos.databinding.FragmentSecondBinding
+import edu.zut.wi.kakit.voicememos.model.NoteModel
+import edu.zut.wi.kakit.voicememos.ui.speak.SpeakFragment
+import edu.zut.wi.kakit.voicememos.util.GetRecognizeSpeech
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+import java.util.*
 
 /**
  * A simple [Fragment] subclass as the second destination in the navigation.
@@ -15,10 +24,37 @@ import edu.zut.wi.kakit.voicememos.databinding.FragmentSecondBinding
 class NotesFragment : Fragment() {
 
     private var _binding: FragmentSecondBinding? = null
+    private var dataNotes = ArrayList<NoteModel>()
+    private val adapter = NotesListAdapter(dataNotes)
 
+
+    private val getRecognizeSpeech = registerForActivityResult(GetRecognizeSpeech()) { data ->
+        if (data == null)
+            Toast.makeText(context, "User Cancelled", Toast.LENGTH_SHORT).show()
+        else
+        {
+
+            dataNotes.add(NoteModel(dataNotes.size+1, reformatDate(0) ,concatAnswer(data)))
+
+            adapter.notifyDataSetChanged()
+        }
+    }
+
+    private val askPermission =
+        registerForActivityResult(
+            ActivityResultContracts.RequestPermission()
+        ) { isGranted: Boolean ->
+            if (isGranted) {
+                Toast.makeText(context,"Permission is granted", Toast.LENGTH_LONG).show()
+            } else {
+                Toast.makeText(context,"Permission is not granted", Toast.LENGTH_LONG).show()
+
+            }
+        }
     // This property is only valid between onCreateView and
     // onDestroyView.
     private val binding get() = _binding!!
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -33,13 +69,35 @@ class NotesFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        binding.recyclerview.layoutManager= LinearLayoutManager(context)
+        binding.recyclerview.adapter=adapter
         binding.buttonSecond.setOnClickListener {
             findNavController().navigate(R.id.action_SecondFragment_to_FirstFragment)
+        }
+        binding.idMic2.setOnClickListener{
+            askPermission.launch(android.Manifest.permission.RECORD_AUDIO)
+            getRecognizeSpeech.launch("Say something")
         }
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    private fun reformatDate(valueDays: Long) : String
+    {
+        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+        return LocalDateTime.now().minusDays(valueDays).format(formatter)
+
+    }
+
+    private fun concatAnswer(data : ArrayList<String>) : String
+    {
+        val sb = StringBuilder()
+        data.forEach{
+            sb.append(it + "\n")
+        }
+        return sb.toString()
     }
 }
