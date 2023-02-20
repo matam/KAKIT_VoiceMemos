@@ -1,4 +1,4 @@
-package edu.zut.wi.kakit.voicememos
+package edu.zut.wi.kakit.voicememos.ui.speak
 
 import android.app.Activity
 import android.content.Context
@@ -10,21 +10,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.activity.result.ActivityResultLauncher
-import androidx.activity.result.ActivityResultRegistry
 import androidx.activity.result.contract.ActivityResultContract
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.lifecycle.DefaultLifecycleObserver
-import androidx.lifecycle.LifecycleOwner
-import androidx.navigation.fragment.findNavController
-import edu.zut.wi.kakit.voicememos.databinding.FragmentFirstBinding
 import edu.zut.wi.kakit.voicememos.databinding.RecordMainBinding
 import java.util.*
 
 /**
  * A simple [Fragment] subclass as the default destination in the navigation.
  */
-class FirstFragment : Fragment() {
+class SpeakFragment : Fragment() {
 
     private var _binding: RecordMainBinding? = null
 

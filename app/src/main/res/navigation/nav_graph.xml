@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/FirstFragment"
-        android:name="edu.zut.wi.kakit.voicememos.FirstFragment"
+        android:name="edu.zut.wi.kakit.voicememos.ui.speak.SpeakFragment"
         android:label="@string/first_fragment_label"
         tools:layout="@layout/fragment_first">
 
@@ -17,7 +17,7 @@
     </fragment>
     <fragment
         android:id="@+id/SecondFragment"
-        android:name="edu.zut.wi.kakit.voicememos.SecondFragment"
+        android:name="edu.zut.wi.kakit.voicememos.ui.notes.NotesFragment"
         android:label="@string/second_fragment_label"
         tools:layout="@layout/fragment_second">
 
