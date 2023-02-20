@@ -14,6 +14,10 @@ class GetRecognizeSpeech : ActivityResultContract<String, ArrayList<String>?>() 
                 RecognizerIntent.EXTRA_LANGUAGE,
                 Locale.getDefault())
             putExtra(
+                RecognizerIntent.EXTRA_LANGUAGE,
+                "pl_PL")
+
+            putExtra(
                 RecognizerIntent.EXTRA_LANGUAGE_MODEL,
                 RecognizerIntent.LANGUAGE_MODEL_FREE_FORM
             )

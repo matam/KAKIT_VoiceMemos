@@ -33,16 +33,16 @@ class NotesFragment : Fragment() {
     //private var adapter = NotesListAdapter(dataNotes)
     private val notesViewModel: NotesViewModel by viewModels()
     //private var  adapter = notesViewModel.getDataNotes().value?.let { NotesListAdapter(it) }
-    //private var  adapter = NotesListAdapter(dataNotes)
-    private lateinit var adapter : NotesListAdapter
+    private var  adapter = NotesListAdapter(dataNotes)
+    //private lateinit var adapter : NotesListAdapter
     private val getRecognizeSpeech = registerForActivityResult(GetRecognizeSpeech()) { data ->
         if (data == null)
             Toast.makeText(context, "User Cancelled", Toast.LENGTH_SHORT).show()
         else
         {
-            notesViewModel.addData(data)
-            //dataNotes.add(NoteModel(dataNotes.size+1, reformatDate(0) ,concatAnswer(data)))
-            //adapter.notifyDataSetChanged()
+            //notesViewModel.addData(data)
+            dataNotes.add(NoteModel(dataNotes.size+1, reformatDate(0) ,concatAnswer(data)))
+            adapter.notifyDataSetChanged()
 
         }
     }
@@ -78,13 +78,13 @@ class NotesFragment : Fragment() {
 
         binding.lifecycleOwner = viewLifecycleOwner
         binding.recyclerview.layoutManager= LinearLayoutManager(context)
-        notesViewModel.dataNotes.observe(viewLifecycleOwner, Observer<ArrayList<NoteModel>> {
-            adapter = NotesListAdapter(it)
-            binding.recyclerview.adapter=adapter
-            adapter?.notifyDataSetChanged()
-        })
+//        notesViewModel.dataNotes.observe(viewLifecycleOwner, Observer<ArrayList<NoteModel>> {
+//            adapter = NotesListAdapter(it)
+//            binding.recyclerview.adapter=adapter
+//            adapter?.notifyDataSetChanged()
+//        })
         //adapter = notesViewModel.getDataNotes().value?.let { NotesListAdapter(it) }!!
-        //binding.recyclerview.adapter=adapter
+        binding.recyclerview.adapter=adapter
         binding.buttonSecond.setOnClickListener {
             findNavController().navigate(R.id.action_SecondFragment_to_FirstFragment)
         }
