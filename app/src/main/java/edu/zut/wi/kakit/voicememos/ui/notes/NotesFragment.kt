@@ -7,6 +7,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.viewModels
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewTreeLifecycleOwner
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import edu.zut.wi.kakit.voicememos.R
@@ -16,7 +20,8 @@ import edu.zut.wi.kakit.voicememos.ui.speak.SpeakFragment
 import edu.zut.wi.kakit.voicememos.util.GetRecognizeSpeech
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
-import java.util.*
+
+
 
 /**
  * A simple [Fragment] subclass as the second destination in the navigation.
@@ -25,18 +30,20 @@ class NotesFragment : Fragment() {
 
     private var _binding: FragmentSecondBinding? = null
     private var dataNotes = ArrayList<NoteModel>()
-    private val adapter = NotesListAdapter(dataNotes)
-
-
+    //private var adapter = NotesListAdapter(dataNotes)
+    private val notesViewModel: NotesViewModel by viewModels()
+    //private var  adapter = notesViewModel.getDataNotes().value?.let { NotesListAdapter(it) }
+    //private var  adapter = NotesListAdapter(dataNotes)
+    private lateinit var adapter : NotesListAdapter
     private val getRecognizeSpeech = registerForActivityResult(GetRecognizeSpeech()) { data ->
         if (data == null)
             Toast.makeText(context, "User Cancelled", Toast.LENGTH_SHORT).show()
         else
         {
+            notesViewModel.addData(data)
+            //dataNotes.add(NoteModel(dataNotes.size+1, reformatDate(0) ,concatAnswer(data)))
+            //adapter.notifyDataSetChanged()
 
-            dataNotes.add(NoteModel(dataNotes.size+1, reformatDate(0) ,concatAnswer(data)))
-
-            adapter.notifyDataSetChanged()
         }
     }
 
@@ -69,8 +76,15 @@ class NotesFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        binding.lifecycleOwner = viewLifecycleOwner
         binding.recyclerview.layoutManager= LinearLayoutManager(context)
-        binding.recyclerview.adapter=adapter
+        notesViewModel.dataNotes.observe(viewLifecycleOwner, Observer<ArrayList<NoteModel>> {
+            adapter = NotesListAdapter(it)
+            binding.recyclerview.adapter=adapter
+            adapter?.notifyDataSetChanged()
+        })
+        //adapter = notesViewModel.getDataNotes().value?.let { NotesListAdapter(it) }!!
+        //binding.recyclerview.adapter=adapter
         binding.buttonSecond.setOnClickListener {
             findNavController().navigate(R.id.action_SecondFragment_to_FirstFragment)
         }
@@ -78,6 +92,7 @@ class NotesFragment : Fragment() {
             askPermission.launch(android.Manifest.permission.RECORD_AUDIO)
             getRecognizeSpeech.launch("Say something")
         }
+
     }
 
     override fun onDestroyView() {

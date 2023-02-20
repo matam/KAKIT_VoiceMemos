@@ -22,9 +22,7 @@ class NotesListAdapter ( private val listNotes: List<NoteModel>): RecyclerView.A
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-
-//
-        val view = LayoutInflater.from(parent.context)
+      val view = LayoutInflater.from(parent.context)
             .inflate(
                 R.layout.notes_item
                 , parent, false)
